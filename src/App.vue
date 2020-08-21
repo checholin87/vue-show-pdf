@@ -1,15 +1,13 @@
 <template>
   <div id="app" class="container-fluid">
-    <div>
-      <form action="#">
-        <div class="float-placeholder">
-          <input type="text" name="email" required>
-          <label for="email">Email</label></div>
-      </form>
-    </div>
     <div class="row">
       <div class="col col-sm-8 offset-sm-2">
-        <pdf src="./pdf-sample.pdf"></pdf>
+        <pdf
+          v-for="i in document.pages"
+          :src="document.src"
+          :key="i"
+          :page="i"
+        ></pdf>
       </div>
     </div>
   </div>
@@ -20,6 +18,20 @@ import pdf from "vue-pdf";
 
 export default {
   name: "app",
+  data() {
+    return {
+      document: {
+        src: pdf.createLoadingTask(
+          "https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf"
+        ),
+        pages: 0
+      }
+    };
+  },
+  async mounted() {
+    let { numPages } = await this.document.src.promise;
+    this.document.pages = numPages;
+  },
   components: {
     pdf
   }
